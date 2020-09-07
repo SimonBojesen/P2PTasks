@@ -1,8 +1,7 @@
-package whoisclient;
+package TCP;
 
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 
 public class TCPS {
     public static final int PORT = 6666;

@@ -1,4 +1,4 @@
-package whoisclient;
+package UDP;
 
 import java.io.*;
 import java.net.*;
@@ -7,18 +7,19 @@ public class UDPS {
     private static final int serverPort = 7777;
 
     // buffers for the messages
-    private static byte[] dataIn = new byte[128];
-    private static byte[] dataOut = new byte[128];
+    public static String imgDirPath = "C:\\Users\\simon\\IdeaProjects\\whoisclient\\src\\UDP\\ServerImgs";
+    private static byte[] dataIn = new byte[65507];
+    private static byte[] dataOut = new byte[65507];
 
     // In UDP messages are encapsulated in packages and sent over sockets
     private static DatagramPacket requestPacket;
     private static DatagramPacket responsePacket;
     private static DatagramSocket serverSocket;
 
-
     public static void main(String[] args) throws Exception
     {
-        String messageIn, messageOut;
+        byte[] dataIn;
+        String messageOut;
         try
         {
             String serverIP = InetAddress.getLocalHost().getHostAddress();
@@ -27,9 +28,8 @@ public class UDPS {
             while(true)
             {
                 System.out.println("Server " + serverIP + " running ...");
-                messageIn = receiveRequest();
-                if (messageIn.equals("stop")) break;
-                messageOut = processRequest(messageIn);
+                dataIn = receiveRequest();
+                messageOut = processRequest(dataIn);
                 sendResponse(messageOut);
             }
         }
@@ -44,18 +44,29 @@ public class UDPS {
         }
     }
 
-    public static String receiveRequest() throws IOException
+    public static byte[] receiveRequest() throws IOException
     {
         requestPacket = new DatagramPacket(dataIn, dataIn.length);
         serverSocket.receive(requestPacket);
-        String message = new String(requestPacket.getData(), 0, requestPacket.getLength());
-        System.out.println("Request: " + message);
-        return message;
+        byte[] data = requestPacket.getData();
+        System.out.println("Request received");
+        return data;
     }
 
-    public static String processRequest(String message)
+    public static String processRequest(byte[] data)
     {
-        return message.toUpperCase();
+        try{
+            File dir = new File(imgDirPath);
+            File[] files = dir.listFiles();
+            int amount = files.length;
+            ImgFunctionality imgF = new ImgFunctionality();
+            imgF.ByteArrayToImg(data, imgDirPath, "output" + (amount+1) + ".jpg");
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
+
+        }
+        return "Image was successfully saved to the server";
     }
 
     public static void sendResponse(String message) throws IOException

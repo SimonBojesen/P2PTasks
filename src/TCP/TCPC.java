@@ -1,4 +1,4 @@
-package whoisclient;
+package TCP;
 
 import java.io.*;
 import java.net.*;

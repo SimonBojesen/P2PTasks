@@ -1,4 +1,4 @@
-package whoisclient;
+package TCP;
 
 import java.io.PrintWriter;
 import java.net.Socket;
